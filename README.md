@@ -8,5 +8,5 @@ Companion Tool for RedFin's Unofficial API [https://github.com/reteps/redfin]/ t
 ### Feature Spec
 
 ### Usage
-
+Can be used to store and query set of houses that are of interest for real estate purpose.
 
