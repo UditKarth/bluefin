@@ -1,5 +1,3 @@
-#IN PROGRESS
-
 from selenium.webdriver import Chrome
 import logging
 import argparse
@@ -59,43 +57,7 @@ def extract_address(url):
     address = " ".join(initial)
     return address
 
-# def get_addresses(city, state, max_price):
-#     # Set up Selenium Chrome driver
-#     client = Redfin()
-#     city_id = client.search(city)['payload']['sections'][0]['rows'][0]['id'].split("_")[1]
-#     options = Options()
-#     options.add_argument("--headless")  # Run Chrome in headless mode (no GUI)
-    
-#     driver = webdriver.Chrome(options=options)
 
-#     # Navigate to Redfin search page
-#     if city is None or state is None or max_price is None:
-#         return "Please enter a city, state, and max price"
-#     city = city.replace(" ", "-")
-#     search_url = f"https://www.redfin.com/city/{city_id}/{state}/{city}/filter/max-price={max_price}"
-#     print(search_url)
-#     driver.get(search_url)
-
-#     # Wait for the page to load and retrieve all house HTML elements
-#     driver.implicitly_wait(5)  # Increase the wait time if needed
-#     house_elements = driver.find_elements(By.CSS_SELECTOR, ".MapHomeCardReact.HomeCard")
-#     print(house_elements)
-#     # Extract addresses from each house HTML element
-#     addresses = []
-#     for element in house_elements:
-#         html = element.get_attribute("innerHTML")
-#         soup = BeautifulSoup(html, 'html.parser')
-#         address_span = soup.find('div', {'class': 'link-and-anchor'})
-#         if address_span is not None:
-#             address = address_span.text.strip()
-#             addresses.append(address)
-#         else:
-#             continue  # Add a placeholder value if no address is found
-
-#     # Close the browser
-#     driver.quit()
-
-#     return addresses
 
 def get_addresses(city, state, max_price):
     # Set up Selenium Chrome driver
@@ -216,9 +178,6 @@ def main():
                 continue
             
             addresses = get_addresses(city, state, max_price)
-            print(len(addresses))
-            # for address in addresses:
-            #     homes.add_info_from_address(address)
             
             
             with concurrent.futures.ThreadPoolExecutor(max_workers=200) as executor:
@@ -230,41 +189,8 @@ def main():
                         executor.submit(homes.add_info_from_address, address)
                         time.sleep(DELAY_SECONDS)
             
-            
-
-
-            # with concurrent.futures.ThreadPoolExecutor() as executor:
-            #     # Split addresses into chunks of maximum size MAX_CHUNK_SIZE
-            #     chunks = [addresses[i:i+MAX_CHUNK_SIZE] for i in range(0, len(addresses), MAX_CHUNK_SIZE)]
-
-            #     for chunk in chunks:
-            #         for address in chunk:
-            #             executor.submit(process_address, address)
 
                     time.sleep(DELAY_SECONDS)
-            # with concurrent.futures.ThreadPoolExecutor() as executor:
-            #     results = []
-            #     for address in addresses:
-            #         print(address)
-            #         result = executor.submit(homes.info_to_dict, address)
-            #         print(result)
-            #         results.append(result)
-
-            #     house_dicts = []
-            #     reet_dicts = []
-            #     for result in concurrent.futures.as_completed(results):
-            #         data = result.result()
-            #         if data is not None:
-            #             house_dict, reet_dict = data
-            #             house_dicts.append(house_dict)
-            #             reet_dicts.append(reet_dict)
-
-            # # Merge house_data and reet dictionaries into dataframes if needed
-            # if house_dicts:
-            #     house_data = pd.DataFrame(house_dicts)
-            #     reet_data = pd.DataFrame(reet_dicts)
-            #     homes.house_data = pd.concat([homes.house_data, house_data], ignore_index=True)
-            #     homes.reet = pd.concat([homes.reet, reet_data], ignore_index=True)
 
             cont = input("Would you like to search with new search terms? [Y/N]:]")
             if (cont.lower() != 'y'):
