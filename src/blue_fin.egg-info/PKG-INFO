@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: blue-fin
+Version: 0.7
+Summary: Companion Tool for RedFin's Unofficial API [https://github.com/reteps/redfin]/ that allows users to query houses and calculate/store financial viability.
+Author-email: Udit Karthik <uditk3@illinois.edu>, Dhuvi Karthik <dhuvik@gmail.com>
+Project-URL: Homepage, https://github.com/UditKarth/bluefin
+Project-URL: Bug Tracker, https://github.com/UditKarth/bluefin/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: Apache License 2.0
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# bluefin
+
+**Active Work in Progress**
+
+### Description
+Companion Tool for RedFin's Unofficial API [https://github.com/reteps/redfin]/ that allows users to query houses and calculate/store financial viability.
+
+### Feature Spec
+
+### Usage
+Can be used to store and query set of houses that are of interest for real estate purpose.
+

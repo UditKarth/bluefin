@@ -1,0 +1,18 @@
+[project]
+name = "blue-fin"
+version = "0.7"
+authors = [
+  { name="Udit Karthik", email="uditk3@illinois.edu" }, {name = "Dhuvi Karthik", email="dhuvik@gmail.com"}
+]
+description = "Companion Tool for RedFin's Unofficial API [https://github.com/reteps/redfin]/ that allows users to query houses and calculate/store financial viability."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache License 2.0",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/UditKarth/bluefin"
+"Bug Tracker" = "https://github.com/UditKarth/bluefin/issues"
