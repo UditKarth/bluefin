@@ -433,7 +433,7 @@ class Homes:
 
     #Given a column name (str) and a condition (str), this function queries the REET dataframe and 
     # returns only the houses which fit the condition
-    def query_r(self, data, condition):
+    def query_reet(self, data, condition):
         df = self.get_reet()
         fin_df = pd.DataFrame()
         try:
@@ -465,7 +465,7 @@ class Homes:
 
     #Given a column name (str) and a condition (str), this function queries the house_data dataframe 
     #and returns only the houses which fit the condition
-    def query_h(self, data, condition):
+    def query_house_data(self, data, condition):
         df = self.get_data()
         fin_df = pd.DataFrame()
         try:
