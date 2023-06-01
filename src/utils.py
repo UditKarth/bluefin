@@ -4,7 +4,7 @@ import hashlib
 import pandas as pd
 import time
 
-# This class is used to get information from the Redfin API
+# This function is used to get information from the Redfin API
 # Utilizing the Redfin API, we can get information about a house
 # It then returns this information as a dictionary
 def get_info_from_address(address):
