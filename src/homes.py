@@ -238,7 +238,7 @@ class Homes:
         ccr = (acf/(dp + cc))*100
         reet = {
             'address': addy,
-            'purchase_price': price,
+            'purchase_price(estimate)': price,
             'down%': down,
             'down_payment': dp,
             'closing_costs': cc,
@@ -261,7 +261,7 @@ class Homes:
         self.reet = pd.concat([self.reet, pd.DataFrame([reet])], ignore_index=True)
     
 
-
+    #Sends information from the given address to the user as a dictionary
     def info_to_dict(self, address):
         client = self.client
         try:
