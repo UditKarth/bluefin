@@ -4,10 +4,39 @@ import time
 import threading
 import PySimpleGUI as sg
 from queue import Queue
+from pathlib import Path
 
 homes = Homes()
 MAX_CHUNK_SIZE = 35
 DELAY_SECONDS = 1
+
+def convert_to_csv(excel_file_path, output_folder, sheet_name, separator, decimal):
+    df = pd.read_excel(excel_file_path, sheet_name)
+    filename = Path(excel_file_path).stem
+    outputfile = Path(output_folder) / f"{filename}.csv"
+    df.to_csv(outputfile, sep=separator, decimal=decimal, index=False)
+    sg.popup_no_titlebar("Done! :)")
+
+    
+def convert_to_csv(homes):
+    # Get the dataframes from the homes object
+    data_df = homes.get_data()
+    reet_df = homes.get_reet()
+
+    # Prompt the user to select a file location to save the CSV
+    filename = sg.popup_get_file("Save CSV", save_as=True, file_types=(("CSV Files", "*.csv"),))
+
+    # Check if the user selected a file location
+    if filename:
+        # Convert data dataframe to CSV
+        data_df.to_csv(filename, index=False)
+        sg.popup(f"Data exported to CSV: {filename}")
+
+        # Convert reet dataframe to CSV
+        reet_df_filename = filename.replace(".csv", "_reet.csv")
+        reet_df.to_csv(reet_df_filename, index=False)
+        sg.popup(f"REET data exported to CSV: {reet_df_filename}")
+
 def process_data(city, state, max_price, address, progress_queue):
     if address is not None:
         # Address search
@@ -214,7 +243,7 @@ def main():
             if event4 == sg.WINDOW_CLOSED or event4 == "Exit":
                 break
             if event4 == "Export to CSV":
-                homes_result.csv()
+                convert_to_csv(homes_result)
                 sg.popup("Exported to CSV")
             if event4 == "Search again":
                 main()
@@ -251,22 +280,26 @@ def main():
                                 if not value_house:
                                     sg.popup("Value cannot be empty. Please try again.")
                                     continue
-                                selected_house_layout = [
-                                    [sg.Text("Selected House Data:")],
-                                    [sg.Table(homes_result.query_house_data(column_name_house, value_house).values.tolist(),
-                                              headings=homes_result.get_data().columns.tolist(),
-                                              auto_size_columns=False,
-                                              col_widths=25,
-                                              display_row_numbers=False,
-                                              justification='left',
-                                              num_rows=10,
-                                              enable_events=True,
-                                              vertical_scroll_only=False,
-                                              key="-SELECTED_TABLE_HOUSE_DATA-")],
-                                    [sg.Button("Export to CSV")],
-                                    [sg.Button("Back")]
-                                ]
-                                window7 = sg.Window("Redfin Web Scraper - Further Query - House Data - Results", selected_house_layout)
+                                if isinstance(homes_result.query_house_data(column_name_house, value_house), str):
+                                    sg.popup("There were no results for the given search terms.")
+                                    continue
+                                else:
+                                    selected_house_layout = [
+                                        [sg.Text("Selected House Data:")],
+                                        [sg.Table(homes_result.query_house_data(column_name_house, value_house).values.tolist(),
+                                                headings=homes_result.get_data().columns.tolist(),
+                                                auto_size_columns=False,
+                                                col_widths=25,
+                                                display_row_numbers=False,
+                                                justification='left',
+                                                num_rows=10,
+                                                enable_events=True,
+                                                vertical_scroll_only=False,
+                                                key="-SELECTED_TABLE_HOUSE_DATA-")],
+                                        [sg.Button("Export to CSV")],
+                                        [sg.Button("Back")]
+                                    ]
+                                    window7 = sg.Window("Redfin Web Scraper - Further Query - House Data - Results", selected_house_layout)
                                 while True:
                                     event7, values7 = window7.read()
                                     if event7 == sg.WINDOW_CLOSED or event7 == "Back":
@@ -297,22 +330,26 @@ def main():
                                 if not value_financial:
                                     sg.popup("Value cannot be empty. Please try again.")
                                     continue
-                                selected_financial_layout = [
-                                    [sg.Text("Selected Financial Data:")],
-                                    [sg.Table(homes_result.query_reet(column_name_financial, value_financial).values.tolist(),
-                                              headings=homes_result.get_reet().columns.tolist(),
-                                              auto_size_columns=False,
-                                              col_widths=25,
-                                              display_row_numbers=False,
-                                              justification='left',
-                                              num_rows=10,
-                                              enable_events=True,
-                                              vertical_scroll_only=False,
-                                              key="-SELECTED_TABLE_REET_DATA-")],
-                                    [sg.Button("Export to CSV")],
-                                    [sg.Button("Back")]
-                                ]
-                                window9 = sg.Window("Redfin Web Scraper - Further Query - Financial Data - Results", selected_financial_layout)
+                                if isinstance(homes_result.query_reet(column_name_financial, value_financial), str):
+                                    sg.popup("There were no results for the given search terms.")
+                                    continue
+                                else:
+                                    selected_financial_layout = [
+                                        [sg.Text("Selected Financial Data:")],
+                                        [sg.Table(homes_result.query_reet(column_name_financial, value_financial).values.tolist(),
+                                                headings=homes_result.get_reet().columns.tolist(),
+                                                auto_size_columns=False,
+                                                col_widths=25,
+                                                display_row_numbers=False,
+                                                justification='left',
+                                                num_rows=10,
+                                                enable_events=True,
+                                                vertical_scroll_only=False,
+                                                key="-SELECTED_TABLE_REET_DATA-")],
+                                        [sg.Button("Export to CSV")],
+                                        [sg.Button("Back")]
+                                    ]
+                                    window9 = sg.Window("Redfin Web Scraper - Further Query - Financial Data - Results", selected_financial_layout)
                                 while True:
                                     event9, values9 = window9.read()
                                     if event9 == sg.WINDOW_CLOSED or event9 == "Back":

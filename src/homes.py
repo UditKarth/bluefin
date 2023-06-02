@@ -238,7 +238,7 @@ class Homes:
         ccr = (acf/(dp + cc))*100
         reet = {
             'address': addy,
-            'purchase_price(estimate)': price,
+            'purchase_estimate': price,
             'down%': down,
             'down_payment': dp,
             'closing_costs': cc,
@@ -409,7 +409,7 @@ class Homes:
         ccr = (acf/(dp + cc))*100
         reet = {
             'address': addy,
-            'purchase_price': price,
+            'purchase_estimate': price,
             'down%': down,
             'down_payment': dp,
             'closing_costs': cc,
@@ -431,61 +431,131 @@ class Homes:
         }
         return {'house_info':house_info, 'reet:':reet}
 
-    #Given a column name (str) and a condition (str), this function queries the REET dataframe and 
-    # returns only the houses which fit the condition
-    def query_reet(self, data, condition):
-        df = self.get_reet()
-        fin_df = pd.DataFrame()
-        try:
-            if condition.startswith('='):
-                condition_value = float(condition[1:])
-                fin_df = df[df[data] == condition_value]
-            elif condition.startswith('<='):
-                condition_value = float(condition[2:])
-                fin_df = df[df[data] <= condition_value]
-            elif condition.startswith('<'):
-                condition_value = float(condition[1:])
-                fin_df = df[df[data] < condition_value]
-            elif condition.startswith('>='):
-                condition_value = float(condition[2:])
-                fin_df = df[df[data] >= condition_value]
-            elif condition.startswith('>'):
-                condition_value = float(condition[1:])
-                fin_df = df[df[data] > condition_value]
-            else:
-                fin_df = df[df[data] == condition]
+    # #Given a column name (str) and a condition (str), this function queries the REET dataframe and 
+    # # returns only the houses which fit the condition
+    # def query_reet(self, data, condition):
+    #     df = self.get_reet()
+    #     fin_df = pd.DataFrame()
+    #     try:
+    #         if condition.startswith('='):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] == condition_value]
+    #         elif condition.startswith('<='):
+    #             condition_value = float(condition[2:])
+    #             fin_df = df[df[data] <= condition_value]
+    #         elif condition.startswith('<'):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] < condition_value]
+    #         elif condition.startswith('>='):
+    #             condition_value = float(condition[2:])
+    #             fin_df = df[df[data] >= condition_value]
+    #         elif condition.startswith('>'):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] > condition_value]
+    #         else:
+    #             fin_df = df[df[data] == condition]
                 
-        except:
-            return "There was an issue with some of the data you entered"
+    #     except:
+    #         return "There was an issue with some of the data you entered"
             
-        if fin_df.empty:
-            return "There were no results =("
-        else:
-            return fin_df 
+    #     if fin_df.empty:
+    #         return "There were no results =("
+    #     else:
+    #         return fin_df 
 
-    #Given a column name (str) and a condition (str), this function queries the house_data dataframe 
-    #and returns only the houses which fit the condition
+    # #Given a column name (str) and a condition (str), this function queries the house_data dataframe 
+    # #and returns only the houses which fit the condition
+    # def query_house_data(self, data, condition):
+    #     df = self.get_data()
+    #     fin_df = pd.DataFrame()
+    #     try:
+    #         if condition.startswith('='):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] == condition_value]
+    #         elif condition.startswith('<='):
+    #             condition_value = float(condition[2:])
+    #             fin_df = df[df[data] <= condition_value]
+    #         elif condition.startswith('<'):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] < condition_value]
+    #         elif condition.startswith('>='):
+    #             condition_value = float(condition[2:])
+    #             fin_df = df[df[data] >= condition_value]
+    #         elif condition.startswith('>'):
+    #             condition_value = float(condition[1:])
+    #             fin_df = df[df[data] > condition_value]
+    #         else:
+    #             fin_df = df[df[data] == condition]
+                    
+    #     except:
+    #         print("There was an issue with some of the data you entered")
+
+    #     if fin_df.empty:
+    #         print("There were no results =(")
+    #     else:
+    #         return fin_df 
+
+    def query_reet(self, data, condition):
+        reet_df = self.get_reet()
+        house_df = self.get_data()
+
+        fin_df = pd.DataFrame()
+        try:
+            if data in reet_df.columns:  # Check if the column exists in reet_df
+                if condition.startswith('='):
+                    condition_value = float(condition[1:])
+                    fin_df = reet_df[reet_df[data] == condition_value]
+                elif condition.startswith('<='):
+                    condition_value = float(condition[2:])
+                    fin_df = reet_df[reet_df[data] <= condition_value]
+                elif condition.startswith('<'):
+                    condition_value = float(condition[1:])
+                    fin_df = reet_df[reet_df[data] < condition_value]
+                elif condition.startswith('>='):
+                    condition_value = float(condition[2:])
+                    fin_df = reet_df[reet_df[data] >= condition_value]
+                elif condition.startswith('>'):
+                    condition_value = float(condition[1:])
+                    fin_df = reet_df[reet_df[data] > condition_value]
+                else:
+                    fin_df = reet_df[reet_df[data] == condition]
+            else:
+                print("The column", data, "does not exist in reet_df")
+                return
+            
+        except:
+            print("There was an issue with some of the data you entered")
+            return
+        
+        if fin_df.empty:
+            print("There were no results =(")
+        else:
+            merged_df = pd.merge(fin_df, house_df, on="address", how="inner")
+            return merged_df
+
     def query_house_data(self, data, condition):
-        df = self.get_data()
+        house_df = self.get_data()
+        reet_df = self.get_reet()
+
         fin_df = pd.DataFrame()
         try:
             if condition.startswith('='):
                 condition_value = float(condition[1:])
-                fin_df = df[df[data] == condition_value]
+                fin_df = house_df[house_df[data] == condition_value]
             elif condition.startswith('<='):
                 condition_value = float(condition[2:])
-                fin_df = df[df[data] <= condition_value]
+                fin_df = house_df[house_df[data] <= condition_value]
             elif condition.startswith('<'):
                 condition_value = float(condition[1:])
-                fin_df = df[df[data] < condition_value]
+                fin_df = house_df[house_df[data] < condition_value]
             elif condition.startswith('>='):
                 condition_value = float(condition[2:])
-                fin_df = df[df[data] >= condition_value]
+                fin_df = house_df[house_df[data] >= condition_value]
             elif condition.startswith('>'):
                 condition_value = float(condition[1:])
-                fin_df = df[df[data] > condition_value]
+                fin_df = house_df[house_df[data] > condition_value]
             else:
-                fin_df = df[df[data] == condition]
+                fin_df = house_df[house_df[data] == condition]
                     
         except:
             print("There was an issue with some of the data you entered")
@@ -493,8 +563,9 @@ class Homes:
         if fin_df.empty:
             print("There were no results =(")
         else:
-            return fin_df 
-    
+            merged_df = pd.merge(fin_df, reet_df, on="address", how="inner")
+            return merged_df
+
     # Remove duplicates from both DataFrames
     def remove_duplicates(self):
         self.house_data = self.house_data.drop_duplicates()
